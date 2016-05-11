@@ -33,6 +33,27 @@ coming soon..
 +-------+------------------------+-------------------------------+
 ```
 
+###Access admin functions/modules (auth through private message):
+```
+/msg ctfbot @auth admin
+[+] access granted
+```
+
+You have to configure the admin sha256(password+salt) per channel in the ctfbot.py
+Password must match hashlib.sha256('password'+'salt'.encode()).hexdigest()
+
+Some modules can be accessed only by an admin such as raw.
+```
+   user | @raw PRIVMSG #ctfbot :raw message
++ctfbot | raw message
+```
+
+User not authorized will get the following message:
+```
+[!] only authorized users can run this command
+```
+
+
 ###Getting help of a specific module:
 ```
 @help ctftime
