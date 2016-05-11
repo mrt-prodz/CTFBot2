@@ -39,7 +39,8 @@ coming soon..
 [+] access granted
 ```
 
-You have to configure the admin sha256(password+salt) per channel in the ctfbot.py
+You have to configure the admin sha256(password+salt) per channel in ctfbot.py
+
 Password must match hashlib.sha256('password'+'salt'.encode()).hexdigest()
 
 Some modules can be accessed only by an admin such as raw.
@@ -48,7 +49,7 @@ Some modules can be accessed only by an admin such as raw.
 +ctfbot | raw message
 ```
 
-User not authorized will get the following message:
+Unauthorized users will get the following message:
 ```
 [!] only authorized users can run this command
 ```
