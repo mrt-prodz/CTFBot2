@@ -6,7 +6,8 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 
 ##Dependencies:
 
-coming soon..
+[PrettyTable](https://pypi.python.org/pypi/PrettyTable)
+[pytz](https://pypi.python.org/pypi/pytz)
 
 ##Features:
 
