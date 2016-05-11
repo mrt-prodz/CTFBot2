@@ -6,9 +6,9 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 
 ##Dependencies:
 
-[PrettyTable](https://pypi.python.org/pypi/PrettyTable)
+[PrettyTable](https://pypi.python.org/pypi/PrettyTable): A simple Python library for easily displaying tabular data in a visually appealing ASCII table format.
 
-[pytz](https://pypi.python.org/pypi/pytz)
+[pytz](https://pypi.python.org/pypi/pytz): World timezone definitions, modern and historical
 
 ##Features:
 
