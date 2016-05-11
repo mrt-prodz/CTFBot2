@@ -19,6 +19,36 @@ coming soon..
 
 ###Default bot trigger character is @
 
+###Available commands:
+```
+@help                                                             
++-------+------------------------+-------------------------------+
+| USER  | TRIGGER                | DESCRIPTION                   |
++-------+------------------------+-------------------------------+
+| admin | @disable [module name] | disable module                |
+| admin | @enable [module name]  | enable module                 |
+| admin | @reload                | reload modules and/or add new |
+| guest | @help [module name]    | display module help           |
+| guest | @modules               | display modules               |
++-------+------------------------+-------------------------------+
+```
+
+###Getting help of a specific module:
+```
+@help ctftime
++----------+--------------------------------+
+| ARGUMENT | DESCRIPTION                    |
+| list     | list upcoming ctf              |
+| show #   | show ctf info with id number # |
++----------+--------------------------------+
+```
+
+Alternative way to get help:
+```
+@ctftime help
+@ctftime
+```
+
 ###Listing available modules:
 ```
 @modules                                                          
