@@ -10,6 +10,8 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 
 [pytz](https://pypi.python.org/pypi/pytz): World timezone definitions, modern and historical
 
+[requests](https://pypi.python.org/pypi/requests/2.9.1): Python HTTP for Humans
+
 ##Features:
 
 * List upcoming online CTFs from ctftime.org using their API
