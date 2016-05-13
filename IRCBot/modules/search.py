@@ -24,39 +24,41 @@ class search(template):
         #:[user]![name]@[IP] [PRIVMSG] [#chan] [cmd] [arg1] [arg2] [...]
         #   ^-----0-----^        1        2      3      4      5    ...
         
-		if buffparts >= 5:
-			
-			query = ' '.join(buffparts[4:])
+        if buffparts >= 5:
 
-			# search duckduckgo
-			response = duckduckgo.query(query)
+            query = ' '.join(buffparts[4:])
 
-			# if there's an instant answer
-			if response.type != "nothing":
+            # search duckduckgo
+            response = duckduckgo.query(query)
 
-				# format response string (could be sexier)
-				rstring = response.heading + ' -> '
-				if response.abstract.text != "":
-					rstring += response.abstract.text
-				if response.abstract.url != "":
-					rstring += ' [' + response.abstract.url + '] '
+            # if there's an instant answer
+            if response.type != "nothing":
 
-			# if there's no adequate answer
-			elif response.type == "nothing" or response.type== "":
-				self.send('PRIVMSG {0} :No instant answers from DuckDuckGo. Retrieving the first Google result:'.format(sendto))
+                # format response string (could be sexier)
+                rstring = response.heading + ' -> '
+                if response.abstract.text != "":
+                    rstring += response.abstract.text
+                if response.abstract.url != "":
+                    rstring += ' [' + response.abstract.url + '] '
 
-				#search google instead
-				for url in google.search(query, num=1, stop=1):
-					
-					# get title
-					r = requests.get(url)
-					html = bs4.BeautifulSoup(r.text, "html.parser")
-					rstring = html.title.text
+            # if there's no adequate answer
+            elif response.type == "nothing" or response.type== "":
+                notice =  'No instant answers from DuckDuckGo. '
+                notice += 'Retrieving the first Google result..'
+                self.send('PRIVMSG {0} :{1}'.format(sendto, notice))
 
-					# add url
-					rstring += ' [' + url + '] '
+                #search google instead
+                for url in google.search(query, num=1, stop=1):
+                    
+                    # get title
+                    r = requests.get(url)
+                    html = bs4.BeautifulSoup(r.text, "html.parser")
+                    rstring = html.title.text
+
+                    # add url
+                    rstring += ' [' + url + '] '
 
 
-			self.send('PRIVMSG {0} :{1}'.format(sendto, rstring))
+            self.send('PRIVMSG {0} :{1}'.format(sendto, rstring))
 
         return
