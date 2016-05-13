@@ -5,7 +5,7 @@ import logging
 import duckduckgo, google
 import requests, bs4
 
-class raw(template):
+class search(template):
     def __init__(self, send):
         # class inheritance
         template.__init__(self, send)
