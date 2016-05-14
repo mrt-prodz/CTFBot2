@@ -82,9 +82,9 @@ class search(template):
                 # if there is results
                 if len(results['d']['results']) > 0:
 
-                    title = results['d']['results'][0]['Title']
+                    title = results['d']['results'][0]['Title'].encode('utf-8').strip()
 
-                    description = results['d']['results'][0]['Description']
+                    description = results['d']['results'][0]['Description'].encode('utf-8').strip()
                     if len(description) > 200:
                         description = description[:200]
 
