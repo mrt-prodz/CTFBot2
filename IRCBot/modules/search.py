@@ -84,7 +84,7 @@ class search(template):
                 results = json.loads(requests.get(bing_url, auth=(bing_key, bing_key)).text)
 
                 # if there is results
-                if len(results['d']['results'] > 0):
+                if len(results['d']['results']) > 0:
 
                     title = results['d']['results'][0]['Title']
 
