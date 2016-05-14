@@ -2,8 +2,10 @@ from template import template
 
 import logging
 
-import duckduckgo, google
+import duckduckgo
 import requests, bs4
+import re
+import json
 
 class search(template):
     def __init__(self, send):
@@ -31,33 +33,71 @@ class search(template):
             # search duckduckgo
             response = duckduckgo.query(query)
 
-            # if there's an instant answer
-            if response.type != "nothing":
+            # trivial answer
+            if response.type == "answer":
 
-                # format response string (could be sexier)
-                rstring = response.heading + ' -> '
-                if response.abstract.text != "":
-                    rstring += response.abstract.text
-                if response.abstract.url != "":
-                    rstring += ' [' + response.abstract.url + '] '
+                name = response.heading
 
-            # if there's no adequate answer
-            elif response.type == "nothing" or response.type== "":
-                notice =  'No instant answers from DuckDuckGo. '
-                notice += 'Retrieving the first Google result..'
-                self.send('PRIVMSG {0} :{1}'.format(sendto, notice))
+                # get description, and cut it short
+                description = response.abstract.text
+                if len(description) > 300:
+                    description = description[:300]
 
-                #search google instead
-                for url in google.search(query, num=1, stop=1):
-                    
-                    # get title
-                    r = requests.get(url)
-                    html = bs4.BeautifulSoup(r.text, "html.parser")
-                    rstring = html.title.text
+                url = response.abstract.url
+                
+                rstring = "[DuckDuckGo] {0} -> {1} [{2}]".format(name, description, url)
 
-                    # add url
-                    rstring += ' [' + url + '] '
+            # some things mean many things
+            elif response.type == "disambiguation":
 
+                name = response.heading
+
+                url = response.abstract.url
+
+                rstring = "[DuckDuckGo] {0} can be several things. [{1}]".format(name, url)
+
+            # some things include other things
+            elif response.type == "category":
+
+                name = response.heading
+
+                url = response.abstract.url
+
+                rstring = "[DuckDuckGo] {0} is a category. [{1}]".format(name, url)
+
+            # other types of answer (calculations, etc)
+            elif response.type == "exclusive":
+
+                answer = response.answer.text
+                # strip useless html tags that come with the answer
+                answer = re.sub('<.*?>', '', answer)
+
+                rstring = "[DuckDuckGo] {0}".format(answer)
+
+            # if DuckDuckGo doesn't have an instant answer, go to bing
+            elif response.type == "nothing" or response.type == "":
+
+                # query the api
+                bing_key = "API_KEY"
+                query = '%20'.join(buffparts[4:])
+                bing_url = 'https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Web?Query=%27{0}%27&$format=json'.format(query)
+                results = json.loads(requests.get(bing_url, auth=(bing_key, bing_key)).text)
+
+                # if there is results
+                if len(results['d']['results'] > 0):
+
+                    title = results['d']['results'][0]['Title']
+
+                    description = results['d']['results'][0]['Description']
+                    if len(description) > 200:
+                        description = description[:200]
+
+                    url = results['d']['results'][0]['Url']
+
+                    rstring = "[Bing] {0} -> {1} [{2}]".format(title, description, url)
+
+                else:
+                    rstring = "The search retrieved no results."
 
             self.send('PRIVMSG {0} :{1}'.format(sendto, rstring))
 
