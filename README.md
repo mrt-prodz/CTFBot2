@@ -14,8 +14,6 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 
 [duckduckgo](https://pypi.python.org/pypi/duckduckgo/0.1) Library for querying the Duck Duck Go API
 
-[google](https://pypi.python.org/pypi/google) Python bindings to the Google search engine.
-
 [BeautifulSoup](https://pypi.python.org/pypi/BeautifulSoup) HTML/XML parser for quick-turnaround applications like screen-scraping.
 
 ##Features:
