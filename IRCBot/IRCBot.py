@@ -281,7 +281,7 @@ class IRCBot (threading.Thread):
                     else:
                         self.modules[cmd]._cmd_(sendto, buffparts)
                 except Exception as error:
-                    logging.debug('module command error: {0}'.format(error))
+                    logging.debug('module {0} error on line {1}: {2}'.format(cmd, sys.exc_info()[-1].tb_lineno, error))
             else:
                 self.send('PRIVMSG {0} :[!] module {1} is not activated'.format(sendto, self.modules[cmd].config['name']))
             return
