@@ -13,7 +13,7 @@
 # https://github.com/mrt-prodz/CTFBot2
 # -----------------------------------------------------------------------------
 
-import threading, logging, os
+import threading, logging
 from time import sleep
 from IRCBot import IRCBot
 
@@ -33,10 +33,6 @@ config = [
                 'enabled' : True,
             },
         ]
-
-# on config where the user running this bot has no $HOME and rights to
-# write in current folder set path to /tmp for example
-os.environ['HOME'] = '/tmp'
 
 # ---------------------------------------------------------------------
 # logging settings
