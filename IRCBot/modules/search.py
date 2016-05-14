@@ -1,11 +1,7 @@
 from template import template
 
 import logging
-
-import duckduckgo
-import requests, bs4
-import re
-import json
+import duckduckgo, requests, re, json
 
 class search(template):
     def __init__(self, send):
