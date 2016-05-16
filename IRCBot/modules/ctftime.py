@@ -32,7 +32,7 @@ class ctftime(template):
         
             # list upcoming events (only ONLINE)
             if buffparts[4] == 'list':
-                start = int(datetime.now().strftime("%s")) * 1000
+                start = (int(datetime.now().strftime("%s")) * 1000) - 259200000
                 finish = start + 2592000000
                 req = requests.get(self.api + 'events/'
                                    + '?limit=10&start=' + str(start)
@@ -77,9 +77,9 @@ class ctftime(template):
                                 self.send('PRIVMSG {0} :{1}'.format(sendto, line))
 
                     except Exception as error:
-                        logging.debug('ctftime parsing CTF error {0}'.format(error))
+                        logging.error('ctftime parsing CTF error {0}'.format(error))
                 else:
-                    self.send('PRIVMSG {0} :[!] error while getting CTFs'.format(sendto))
+                    self.send('PRIVMSG {0} :[!] error while getting CTF list'.format(sendto))
                 return
 
             # show specific event with ID
@@ -119,9 +119,9 @@ class ctftime(template):
                                     self.send('PRIVMSG {0} :{1}'.format(sendto, line))
 
                         except Exception as error:
-                            logging.debug('ctftime parsing CTF error {0}'.format(error))
+                            logging.error('ctftime parsing CTF error {0}'.format(error))
                     else:
-                        self.send('PRIVMSG {0} :[!] error while getting CTFs'.format(sendto))
+                        self.send('PRIVMSG {0} :[!] no CTF found with this event ID'.format(sendto))
                     return
 
         # nothing to do here show help
