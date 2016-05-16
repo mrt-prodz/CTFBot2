@@ -15,29 +15,16 @@
 
 import threading, logging
 from time import sleep
-from IRCBot import IRCBot
+from IRCBot import IRCBot, settings
 
 # ---------------------------------------------------------------------
-# bot configuration
+# bot configuration: IRCBot/settings.py
 # ---------------------------------------------------------------------
-config = [
-            {
-                'host'    :'10.0.0.10',
-                'port'    : 6697,
-                'ssl'     : True,
-                'nick'    : 'ctfbot',
-                'chans'   : ['#ctfbot'],
-                'pwd'     : 'nickservbotpassword',
-                'salt'    : 'Salty Cheesy Poofs!',
-                'admin'   : 'df9947089cd1895cce41cffb4dc8388ff11aa134b3f16d6587e306ed33882060',
-                'enabled' : True,
-            },
-        ]
 
 # ---------------------------------------------------------------------
 # logging settings
 # ---------------------------------------------------------------------
-logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
+logging.basicConfig(level=settings.loglevel, format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
 # ---------------------------------------------------------------------
 # clean exit of all threads
@@ -56,7 +43,7 @@ def cleanexit(threads):
 if __name__ == '__main__':
     threads = []
     # run bot in threads
-    for server in config:
+    for server in settings.config:
         if server['enabled']:
             t = IRCBot(server)
             threads.append(t)
