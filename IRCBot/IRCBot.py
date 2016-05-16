@@ -59,7 +59,7 @@ class IRCBot (threading.Thread):
             try:
                 self.connect()
             except Exception as error:
-                logging.debug('error: {0}'.format(error))
+                logging.error('error: {0}'.format(error))
             time.sleep(5)
         # clean disconnect
         self.disconnect()
@@ -90,7 +90,7 @@ class IRCBot (threading.Thread):
                     # store module in modules dictionnary and use trigger as key
                     self.modules[instance.config['trigger']] = instance
                 except Exception as error:
-                    logging.debug('error while loading modules: {0}'.format(error))
+                    logging.error('error while loading modules: {0}'.format(error))
             else:
                 logging.debug('module {0} already loaded, reloading'.format(mod_name))
                 reload(mod_name)
@@ -108,13 +108,13 @@ class IRCBot (threading.Thread):
             else:
                 self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as error:
-            logging.debug('cannot create socket: {0}'.format(error))
+            logging.critical('cannot create socket: {0}'.format(error))
             return
 
         try:
             self.irc.connect((self.host, self.port))
         except socket.gaierror as error:
-            logging.debug('cannot connect to {0} on port {1}: {2}'.format(self.host, self.port, error))
+            logging.critical('cannot connect to {0} on port {1}: {2}'.format(self.host, self.port, error))
             return
 
         self.send('USER {0} {1} {2} :ctfbot'.format(self.nick, self.nick, self.nick))
@@ -133,7 +133,7 @@ class IRCBot (threading.Thread):
             self.irc.shutdown(socket.SHUT_RDWR)
             self.irc.close()
         except socket.error as error:
-            logging.debug('socket error: {0}'.format(error))
+            logging.critical('socket error: {0}'.format(error))
 
     # ---------------------------------------------------------------------
     # send message
@@ -281,7 +281,8 @@ class IRCBot (threading.Thread):
                     else:
                         self.modules[cmd]._cmd_(sendto, buffparts)
                 except Exception as error:
-                    logging.debug('module {0} error on line {1}: {2}'.format(cmd, sys.exc_info()[-1].tb_lineno, error))
+                    logging.error('module {0} error on line {1}: {2}'.format(cmd, sys.exc_info()[-1].tb_lineno, error))
+                    
             else:
                 self.send('PRIVMSG {0} :[!] module {1} is not activated'.format(sendto, self.modules[cmd].config['name']))
             return
@@ -290,6 +291,24 @@ class IRCBot (threading.Thread):
         # no idea what the user asked for, echo it back for debugging
         # ---------------------------------------------------------------------
         #self.send('PRIVMSG {0} :{1}'.format(sendto, ' '.join(buffparts)))
+
+    # ---------------------------------------------------------------------
+    # message sent to bot with listener trigger
+    # ---------------------------------------------------------------------
+    def tolisteners(self, buffparts):
+        # send to channel by default
+        sendto = buffparts[2]
+        # if buffparts[2] is the botname send to user
+        if (buffparts[2] == self.nick):
+            sendto = buffparts[0].split('!')[0][1:]
+
+        for module in self.modules:
+            mod = self.modules[module]
+            if mod.config['trigger'] == '_listener_':
+	        try:
+                    mod._cmd_(sendto, buffparts)
+	        except Exception as error:
+	            logging.error('module {0} error on line {1}: {2}'.format(mod.config['name'], sys.exc_info()[-1].tb_lineno, error))
 
     # ---------------------------------------------------------------------
     # main thread loop parsing IRC messages
@@ -301,13 +320,13 @@ class IRCBot (threading.Thread):
             try:
                 self.rbuffer = self.irc.recv(self.sbuffer)
             except socket.timeout:
-                logging.debug('socket timeout..')
+                logging.critical('socket timeout..')
                 return
             except socket.error:
-                logging.debug('lost connection..')
+                logging.critical('lost connection..')
                 return
             except:
-                logging.debug('unexpected error..')
+                logging.critical('unexpected error..')
                 return
 
             # parse IRC message
@@ -353,7 +372,7 @@ class IRCBot (threading.Thread):
                     
                     # if error quit thread loop
                     if buffparts[0] == 'ERROR':
-                        logging.debug('unexpected error: {0}'.format(line))
+                        logging.error('unexpected error: {0}'.format(line))
                         return
                         
                     # auto join after kick
@@ -370,6 +389,9 @@ class IRCBot (threading.Thread):
                             buffparts[3] = buffparts[3][len(self.trigger):]
                             cmd = buffparts[3]
                             self.parsecmd(cmd, buffparts)
+                        # else send content to modules with listener trigger
+                        else:
+                            self.tolisteners(buffparts)
 
         # ---------------------------------
         logging.debug('loop ended')
