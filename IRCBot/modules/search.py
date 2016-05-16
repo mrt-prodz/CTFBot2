@@ -2,6 +2,10 @@ from template import template
 
 import logging
 import duckduckgo, requests, re, json
+# ---------------------------------------------------------------
+# WARNING: BINGAPIKEY must be declared in IRCBot/settings.py
+# ---------------------------------------------------------------
+from IRCBot import settings
 
 class search(template):
     def __init__(self, send):
@@ -17,12 +21,30 @@ class search(template):
                         ['ARGUMENT', 'DESCRIPTION'],
                         ['query',  'Query to search for.'],
                     ]
+        self.charlimit = 200
         
     def _cmd_(self, sendto, buffparts):
         #:[user]![name]@[IP] [PRIVMSG] [#chan] [cmd] [arg1] [arg2] [...]
         #   ^-----0-----^        1        2      3      4      5    ...
+
+        if len(buffparts) == 5  and re.match(r'CVE-\d{4}-\d{4,}', buffparts[4]):
+            try:
+	        cve_url = 'http://cve.circl.lu/api/cve/{0}'.format(buffparts[4])
+	        results = json.loads(requests.get(cve_url).text)
+                # make sure we have a summary in the JSON object
+                summary = getattr(results, 'summary', None)
+                if summary is None:
+                    return
+	        if len(summary) > self.charlimit:
+		    summary = summary[:self.charlimit] + '..'
+                cvss = results['cvss']
+                sciplink = results['map_cve_scip']['sciplink']
+	        rstring = "[CVE] {0} [CVSS: {1}] -> {2} [{3}]".format(buffparts[4], cvss, summary, sciplink)
+                self.send('PRIVMSG {0} :{1}'.format(sendto, rstring))
+            except Exception as e:
+                logging.error('search CVE error: {0}'.format(e))
         
-        if buffparts >= 5:
+        elif len(buffparts) >= 5:
 
             query = ' '.join(buffparts[4:])
 
@@ -36,8 +58,8 @@ class search(template):
 
                 # get description, and cut it short
                 description = response.abstract.text
-                if len(description) > 300:
-                    description = description[:300]
+                if len(description) > self.charlimit:
+                    description = description[:self.charlimit] + '..'
 
                 url = response.abstract.url
                 
@@ -71,13 +93,12 @@ class search(template):
                 rstring = "[DuckDuckGo] {0}".format(answer)
 
             # if DuckDuckGo doesn't have an instant answer, go to bing
-            elif response.type == "nothing" or response.type == "":
+            elif getattr(settings, 'BINGAPIKEY', None) is not None and (response.type == "nothing" or response.type == ""):
 
                 # query the api
-                bing_key = "API_KEY"
                 query = '%20'.join(buffparts[4:])
                 bing_url = 'https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Web?Query=%27{0}%27&$format=json'.format(query)
-                results = json.loads(requests.get(bing_url, auth=(bing_key, bing_key)).text)
+                results = json.loads(requests.get(bing_url, auth=(settings.BINGAPIKEY, settings.BINGAPIKEY)).text)
 
                 # if there is results
                 if len(results['d']['results']) > 0:
@@ -85,8 +106,9 @@ class search(template):
                     title = results['d']['results'][0]['Title'].encode('utf-8').strip()
 
                     description = results['d']['results'][0]['Description'].encode('utf-8').strip()
-                    if len(description) > 200:
-                        description = description[:200]
+
+                    if len(description) > self.charlimit:
+                        description = description[:self.charlimit] + '..'
 
                     url = results['d']['results'][0]['Url']
 
