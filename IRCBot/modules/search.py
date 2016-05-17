@@ -32,9 +32,11 @@ class search(template):
 	        cve_url = 'http://cve.circl.lu/api/cve/{0}'.format(buffparts[4])
 	        results = json.loads(requests.get(cve_url).text)
                 # make sure we have a summary in the JSON object
-                summary = getattr(results, 'summary', None)
-                if summary is None:
+                if results.has_key('summary') is False:
+                    rstring = "The search retrieved no results."
+                    self.send('PRIVMSG {0} :{1}'.format(sendto, rstring))
                     return
+		summary = results['summary']
 	        if len(summary) > self.charlimit:
 		    summary = summary[:self.charlimit] + '..'
                 cvss = results['cvss']
@@ -97,7 +99,7 @@ class search(template):
 
                 # query the api
                 query = '%20'.join(buffparts[4:])
-                bing_url = 'https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Web?Query=%27{0}%27&$format=json'.format(query)
+                bing_url = 'https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Web?Query=%27{0}%27&Market=%27en-US%27&$format=json'.format(query)
                 results = json.loads(requests.get(bing_url, auth=(settings.BINGAPIKEY, settings.BINGAPIKEY)).text)
 
                 # if there is results
