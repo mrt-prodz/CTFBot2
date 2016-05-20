@@ -89,6 +89,10 @@ class search(template):
             elif response.type == "exclusive":
 
                 answer = response.answer.text
+                
+                # replace useful html tags (more to be found)
+                answer = re.sub('<sup>', '^', answer)
+
                 # strip useless html tags that come with the answer
                 answer = re.sub('<.*?>', '', answer)
 
