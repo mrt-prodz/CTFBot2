@@ -1,10 +1,10 @@
-#CTFBot2
+# CTFBot2
  
-####IRC Bot listing upcoming online CTF from ctftime.org API
+#### IRC Bot listing upcoming online CTF from ctftime.org API
 
 This is another version of a small IRC bot listing upcoming CTF from ctftime.org and some resources related to them.
 
-##Dependencies:
+## Dependencies:
 
 [PrettyTable](https://pypi.python.org/pypi/PrettyTable): A simple Python library for easily displaying tabular data in a visually appealing ASCII table format.
 
@@ -14,18 +14,18 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 
 [duckduckgo](https://pypi.python.org/pypi/duckduckgo/0.1) Library for querying the Duck Duck Go API
 
-##Features:
+## Features:
 
 * List upcoming online CTFs from ctftime.org using their API
 * Join multiple servers/channels
 * Small list of resources related to computer security
 * Easy to add remove features through modules
 
-##List of commands:
+## List of commands:
 
-###Default bot trigger character is @
+### Default bot trigger character is @
 
-###Available commands:
+### Available commands:
 ```
 @help                                                             
 +-------+------------------------+-------------------------------+
@@ -39,7 +39,7 @@ This is another version of a small IRC bot listing upcoming CTF from ctftime.org
 +-------+------------------------+-------------------------------+
 ```
 
-###Access admin functions/modules (auth through private message):
+### Access admin functions/modules (auth through private message):
 ```
 /msg ctfbot @auth admin
 [+] access granted
@@ -61,7 +61,7 @@ Unauthorized users will get the following message:
 ```
 
 
-###Getting help of a specific module:
+### Getting help of a specific module:
 ```
 @help ctftime
 +----------+--------------------------------+
@@ -77,7 +77,7 @@ Alternative way to get help:
 @ctftime
 ```
 
-###Listing available modules:
+### Listing available modules:
 ```
 @modules                                                          
 +-----+----------+-----------+-----------------------------------+
@@ -93,7 +93,7 @@ Alternative way to get help:
 +-----+----------+-----------+-----------------------------------+
 ```
 
-###List upcoming ctftime.org CTF:
+### List upcoming ctftime.org CTF:
 ```
 @ctftime list
 +-----+-----------------------------+-------+--------+ 
@@ -111,7 +111,7 @@ Alternative way to get help:
 +-----+-----------------------------+-------+--------+ 
 ```
 
-###Display CTF description using its ID:
+### Display CTF description using its ID:
 ```
 @ctftime show 320
 +--------+--------------------------------+
@@ -125,5 +125,5 @@ Alternative way to get help:
 +--------+--------------------------------+
 ```
 
-##Reference:
+## Reference:
 ...
