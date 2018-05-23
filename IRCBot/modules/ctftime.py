@@ -24,6 +24,8 @@ class ctftime(template):
         self.api = 'https://ctftime.org/api/v1/'
         # excerpt of CTF name length
         self.namelimit = 24
+        self.headers = requests.utils.default_headers()
+        self.headers.update({'User-Agent': 'CTFbot'})
         
     def _cmd_(self, sendto, buffparts):
         #:[user]![name]@[IP] [PRIVMSG] [#chan] [cmd] [arg1] [arg2] [...]
@@ -36,7 +38,7 @@ class ctftime(template):
                 finish = start + 2592000000
                 req = requests.get(self.api + 'events/'
                                    + '?limit=10&start=' + str(start)
-                                   + '&finish=' + str(finish))
+                                   + '&finish=' + str(finish), headers=self.headers)
                 if req.status_code == 200:
                     try:
                         rss = req.text
@@ -85,7 +87,7 @@ class ctftime(template):
             # show specific event with ID
             if buffparts[4] == 'show':
                 if len(buffparts) == 6:
-                    req = requests.get(self.api + 'events/' + str(int(buffparts[5])) + '/')
+                    req = requests.get(self.api + 'events/' + str(int(buffparts[5])) + '/', headers=self.headers)
                     if req.status_code == 200:
                         try:
                             rss = req.text
